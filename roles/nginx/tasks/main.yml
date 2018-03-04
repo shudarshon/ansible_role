@@ -1,0 +1,50 @@
+---
+
+- name: Install nginx
+  package:
+     name: nginx
+     state: latest
+  tags: [install_nginx]
+
+- name: Extract nginx config tar into specific directory
+  unarchive:
+    src: ng-config.tar.gz
+    dest: "{{ nginx_root_dir }}"
+    remote_src: no
+    owner: root
+    group: root
+    mode: 0755
+  tags: [copy_new_config]
+
+- name: Install nginx mime types in nginx root directory
+  copy:
+    src: mime.types
+    dest: "{{ nginx_root_dir }}"
+    mode: 0644
+  tags: [install_nginx_mime_types]
+
+- name: Install nginx configuration in nginx root directory
+  template:
+    src: nginx.conf.j2
+    dest: "{{ nginx_root_dir }}/nginx.conf"
+    mode: 0644
+    remote_src: no
+  tags: [install_nginx_configuration]
+
+- name: Install application configuration in nginx sites directory
+  template:
+    src: app.conf.j2
+    dest: "{{ app_config_path }}"
+    remote_src: no
+    mode: 0644
+  tags: [install_nginx_application_config]
+
+- name: Install symlink to application config file
+  file:
+    src: "{{ app_config_path }}"
+    dest: "{{ app_config_path_link }}"
+    state: link
+    mode: 0644
+  notify:
+    - restart nginx
+  tags: [symlink_nginx_app_config]

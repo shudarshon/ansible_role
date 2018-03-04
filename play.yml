@@ -1,0 +1,12 @@
+---
+# This playbook deploys a simple standalone Tomcat 9 server with nginx revrese proxy.
+
+- hosts: host
+  become: yes
+  become_method: sudo
+
+  roles:
+    - oracle-java8
+    - tomcat
+      #- nginx
+      

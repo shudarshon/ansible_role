@@ -1,0 +1,12 @@
+---
+- name: restart tomcat
+  service: name=tomcat state=restarted
+
+- name: enable tomcat
+  service: name=tomcat state=started enabled=yes
+
+- name: reload systemd
+  command: systemctl daemon-reload
+
+- name: restart nginx
+  service: name=nginx state=restarted
