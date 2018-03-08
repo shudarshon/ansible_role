@@ -1,8 +1,10 @@
 ---
 
-#- name: Ensure tomcat_java_home is defined
-#  fail: msg="You must define the tomcat_java_home variable"
-#  when: tomcat_java_home is not defined
+# Test if java home is defined
+- name: Ensure tomcat_java_home is defined
+  fail: msg="You must define the tomcat_java_home variable"
+  when: tomcat_java_home is not defined
+
 
 # Create tomcat user group
 - name: Create tomcat group
@@ -11,89 +13,87 @@
     system: yes
   tags: [create_tomcat_group]
 
-# Download and extract specific tomcat version
-- name: Download and extract tomcat archive
-  unarchive:
-    src: "{{ tomcat_url }}"
-    dest: /opt/
-    copy: no
-    mode: 0750
-    owner: root
-    group: "{{ tomcat_group }}"
-  tags: [download_extract]
-
 # Create tomcat user as a system user
 - name: Create tomcat user
   user:
-    name: "{{ tomcat_user }}"
     group: "{{ tomcat_group }}"
+    name: "{{ tomcat_user }}"
     shell: /bin/bash
     home: "{{tomcat_home_dir}}"
     system: yes
-    createhome: no
+    createhome: yes
     generate_ssh_key: yes
     ssh_key_bits: 2048
     ssh_key_file: .ssh/id_rsa
   tags: [create_tomcat_user]
 
-# Set tomcat user permission of work, webapps, temp ssh and logs directory
-- name: Make the tomcat user the owner of the webapps, work, temp, ssh and logs directories
-  file:
-    path: "{{tomcat_home_dir}}/{{item}}"
+# Download and extract specific tomcat version
+- name: Download and extract tomcat archive
+  unarchive:
+    src: "{{ tomcat_url }}"
+    dest: "{{tomcat_home_dir}}"
+    copy: no
+    mode: 0750
     owner: "{{ tomcat_user }}"
     group: "{{ tomcat_group }}"
-    recurse: yes
-  with_items:
-    - webapps
-    - work
-    - temp
-    - logs
-    - .ssh
-  tags: [web_work_temp_logs_perm]
-
-# Change tomcat permission on conf directory in app path
-- name: Grant Tomcat group read access to the conf directory
-  file:
-    state: directory
-    path: "{{tomcat_home_dir}}/conf"
-    mode: "g+r"
-    recurse: true
-  tags: [conf_g+r_perm]
-
-# Change tomcat permission on conf directory in app path
-- name: Grant Tomcat group execute access to the conf directory itself
-  file:
-    path: "{{tomcat_home_dir}}/conf"
-    state: directory
-    mode: "g+x"
-  tags: [conf_g+x_perm]
+    extra_opts: ['--strip-components=1']
+  tags: [download_extract]
 
 # Replace tomcat-users xml for applying tomcat roles
 - name: Create tomcat-users.xml
+  become_user: "{{ tomcat_user }}"
   template:
     src: tomcat-users.xml.j2
     dest: "{{tomcat_home_dir}}/conf/tomcat-users.xml"
   #notify: restart tomcat
   tags: [apply_tomcat_user_role]
 
+# if you want to use host manger role then uncomment
+
 # Changing IP restricion of tomcat app server from localhost to any IP
-- name: Replace ip restriction of manager & host-manager role
-  template:
-    src: context.xml.j2
-    dest: "{{ item }}"
+#- name: Replace ip restriction of manager & host-manager role
+#  become_user: "{{ tomcat_user }}"
+#  template:
+#    src: context.xml.j2
+#    dest: "{{ item }}"
   #notify: restart tomcat
-  with_items:
-    - "{{tomcat_home_dir}}/webapps/host-manager/META-INF/context.xml"
-    - "{{tomcat_home_dir}}/webapps/manager/META-INF/context.xml"
-  tags: [remove_tomcat_role_ip_restriction]
+#  with_items:
+#    - "{{tomcat_home_dir}}/webapps/host-manager/META-INF/context.xml"
+#    - "{{tomcat_home_dir}}/webapps/manager/META-INF/context.xml"
+#  tags: [remove_tomcat_role_ip_restriction]
+
+# Truncate webapps directory
+- name: Remove everything under tomcat webapps directory
+  become_user: "{{ tomcat_user }}"
+  shell: "rm -rf {{tomcat_home_dir}}/webapps/*"
+  tags: [remove_webapps_file]
+
+# Download Jenkins war
+- name: Download Jenkins war file
+  become_user: "{{ tomcat_user }}"
+  get_url:
+    url: "{{ jenkins_url }}"
+    dest: "{{tomcat_home_dir}}/webapps/ROOT.war"
+    mode: 0640
+  tags: [get_jenkins]
 
 # Adding JENKINS_HOME path in tomcat
 - name: Adding JENKINS_HOME in tomcat configuration
+  become_user: "{{ tomcat_user }}"
   template:
     src: conf-context.xml.j2
-    dest: "{{tomcat_home_dir}}/webapps/conf/context.xml"
+    dest: "{{tomcat_home_dir}}/conf/context.xml"
   #notify: restart tomcat
   tags: [add_jenkins_home_config]
+
+# Create Jenkins home directory
+- name: Create Jenkins app home directory
+  file:
+    path: "{{ jenkins_home_path }}"
+    state: directory
+    mode: 0750
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
 
 # Create app directory symbolic link
 - name: Symlink Tomcat to current version
