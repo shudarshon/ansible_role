@@ -1,0 +1,36 @@
+---
+
+# Test if java home is defined
+- name: Ensure java_home is defined
+  fail: msg="You must define the java_home variable"
+  when: java_home is not defined
+
+
+# Create jenkins user group
+- name: Create jenkins group
+  group:
+    name: "{{ jenkins_group }}"
+    system: yes
+  tags: [create_jenkins_group]
+
+# Create jenkins user as a system user
+- name: Create jenkins user
+  user:
+    group: "{{ jenkins_group }}"
+    name: "{{ jenkins_user }}"
+    shell: /bin/bash
+    home: "{{jenkins_home_dir}}"
+    system: yes
+    createhome: yes
+    generate_ssh_key: yes
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
+  tags: [create_jenkins_user]
+
+# add jenkins master public key as authorized key
+- name: Set authorized key from jenkins master public key
+  become_user: "{{ jenkins_user }}"
+  authorized_key:
+    user: "{{ jenkins_ssh_user }}"
+    state: present
+    key: "{{ lookup('file', './files/id_rsa.pub') }}"

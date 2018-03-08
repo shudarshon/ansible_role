@@ -1,0 +1,14 @@
+---
+# Tomcat installation directory
+
+jenkins_home_dir: /var/lib/jenkins
+
+# Java home directry
+
+java_home: /usr/lib/jvm/java-8-oracle
+
+# Tomcat user and group
+
+jenkins_user: tomcat
+jenkins_group: tomcat
+jenkins_ssh_user: tomcat  #value will be jenkins if jenkins is installed without tomcat
