@@ -27,6 +27,15 @@
     ssh_key_file: .ssh/id_rsa
   tags: [create_tomcat_user]
 
+# add ssh config for skipping known hosts
+- name: Add ssh config
+  become_user: "{{ tomcat_user }}"
+  template:
+    src: ssh-config.j2
+    dest: "{{tomcat_home_dir}}/.ssh/config"
+    mode: 0400
+  tags: [add_ssh_config]
+
 # Download and extract specific tomcat version
 - name: Download and extract tomcat archive
   unarchive:
