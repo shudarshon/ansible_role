@@ -34,3 +34,12 @@
     user: "{{ jenkins_ssh_user }}"
     state: present
     key: "{{ lookup('file', './files/id_rsa.pub') }}"
+
+# add ssh config for skipping known hosts
+- name: Add ssh config
+  become_user: "{{ jenkins_user }}"
+  template:
+    src: ssh-config.j2
+    dest: "{{jenkins_home_dir}}/.ssh/config"
+    mode: 0400
+  tags: [add_ssh_config]
