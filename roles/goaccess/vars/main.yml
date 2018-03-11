@@ -1,0 +1,7 @@
+---
+
+goaccess_user: www-data
+goaccess_group: www-data
+
+nginx_log_dir: /var/log/nginx
+goaccess_dir: /var/www/html/report

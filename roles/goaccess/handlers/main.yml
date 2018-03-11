@@ -1,0 +1,10 @@
+---
+
+- name: start goaccess
+  service: name=goaccess state=started enabled=yes
+
+- name: restart goaccess
+  service: name=goaccess state=restarted enabled=yes
+
+- name: reload systemd
+  command: systemctl daemon-reload
