@@ -13,7 +13,7 @@ jenkins_password_path: "{{ jenkins_home_path }}/secrets/initialAdminPassword"
 
 tomcat_home_dir: /opt/tomcat
 tomcat_app_path: /usr/share/tomcat
-jenkins_home_path: /var/lib/jenkins
+jenkins_home_path: /opt/tomcat
 
 # Java home directry
 

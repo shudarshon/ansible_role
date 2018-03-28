@@ -95,15 +95,6 @@
   #notify: restart tomcat
   tags: [add_jenkins_home_config]
 
-# Create Jenkins home directory
-- name: Create Jenkins app home directory
-  file:
-    path: "{{ jenkins_home_path }}"
-    state: directory
-    mode: 0750
-    owner: "{{ tomcat_user }}"
-    group: "{{ tomcat_group }}"
-
 # Create app directory symbolic link
 - name: Symlink Tomcat to current version
   file:
