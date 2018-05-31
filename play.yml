@@ -6,8 +6,9 @@
   become_method: sudo
 
   roles:
-    - oracle-java8
-      #- tomcat-jenkins
-    - jenkins-slave
-      #- nginx
+    #- oracle-java8
+    #- tomcat-jenkins
+      #- jenkins-slave
+    - nginx
+      #- tomcat
 

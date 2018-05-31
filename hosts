@@ -1,5 +1,5 @@
 [host]
-52.71.252.59
+34.201.102.113
 [host:vars]
 #ansible_ssh_user=ubuntu
 ansible_ssh_user=ec2-user

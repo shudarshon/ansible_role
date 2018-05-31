@@ -1,5 +1,4 @@
 ---
-
 - name: Install nginx
   package:
      name: nginx
@@ -46,5 +45,5 @@
     state: link
     mode: 0644
   notify:
-    - restart nginx
+    - start nginx
   tags: [symlink_nginx_app_config]
