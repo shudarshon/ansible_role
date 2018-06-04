@@ -1,0 +1,22 @@
+
+---
+- name: Enable nginx repo.
+  template:
+    src: nginx.repo.j2
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: root
+    mode: 0644
+  when: true
+  tags: [install_nginx]
+
+- name: Ensure nginx is installed.
+  package:
+    name: nginx
+    state: present
+
+- name: Remove nginx default config file
+  file:
+    path: "{{ app_config_path_link }}"
+    state: absent
+  tags: [remove_nginx_default_config]

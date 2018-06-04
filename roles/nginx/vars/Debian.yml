@@ -10,6 +10,8 @@ error_log: /var/log/nginx/error.log
 
 # Nginx & Application config file path
 
+nginx_user: www-data
+
 nginx_root_dir: /etc/nginx
 
 nginx_config_path: /etc/nginx/nginx.conf

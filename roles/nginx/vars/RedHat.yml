@@ -1,0 +1,21 @@
+---
+
+# Web Application Configurations
+
+app_port: 8080
+
+access_log: /var/log/nginx/access.log
+
+error_log: /var/log/nginx/error.log
+
+# Nginx & Application config file path
+
+nginx_user: nginx
+
+nginx_root_dir: /etc/nginx
+
+nginx_config_path: /etc/nginx/nginx.conf
+
+app_config_path: /etc/nginx/config/app.conf
+
+app_config_path_link: /etc/nginx/conf.d/default.conf
