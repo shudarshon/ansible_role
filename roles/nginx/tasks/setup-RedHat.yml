@@ -21,7 +21,16 @@
     state: absent
   tags: [remove_nginx_default_config]
 
+# this task runs 'getenforce' and registers the result into the "sestatus" variable
+# changed_when: false tells ansible never to mark this task as "changed"
+- name: Check SELinux status
+  command: getenforce
+  register: sestatus
+  changed_when: false
+  tags: [check_selinux_status]
+
 # Allow SeLinux
 - name: Allow SeLinux permission
   shell: "setsebool -P httpd_can_network_connect 1"
   tags: [allow_selinux]
+  when: '"Enabled" in sestatus.stdout or "Enforcing" in sestatus.stdout'
