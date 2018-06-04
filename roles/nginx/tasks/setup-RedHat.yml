@@ -20,3 +20,8 @@
     path: "{{ app_config_path_link }}"
     state: absent
   tags: [remove_nginx_default_config]
+
+# Allow SeLinux
+- name: Allow SeLinux permission
+  shell: "setsebool -P httpd_can_network_connect 1"
+  tags: [allow_selinux]

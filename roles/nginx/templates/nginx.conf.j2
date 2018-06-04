@@ -153,5 +153,5 @@ http {
   # placed in the sites-available folder, and then the configuration should be enabled
   # by creating a symlink to it in the sites-enabled folder.
   # See doc/sites-enabled.md for more info.
-  include /etc/nginx/sites-enabled/*;
+  include {{nginx_config_root}}/*;
 }

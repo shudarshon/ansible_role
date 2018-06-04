@@ -19,3 +19,5 @@ nginx_config_path: /etc/nginx/nginx.conf
 app_config_path: /etc/nginx/sites-available/default
 
 app_config_path_link: /etc/nginx/sites-enabled/default
+
+nginx_config_root: /etc/nginx/sites-enabled
