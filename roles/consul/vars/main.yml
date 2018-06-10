@@ -1,0 +1,16 @@
+---
+
+# Java source package information
+# Get download url from http://www.oracle.com/technetwork/java/javase/downloads/index.html
+
+consul_path: "/usr/local/bin"
+
+download_url: "https://releases.hashicorp.com/consul/1.1.0/consul_1.1.0_linux_amd64.zip"
+
+consul_data_dir: "/var/consul"
+
+consul_bootstrap_config_dir: "/etc/consul.d/bootstrap"
+
+consul_server_config_dir: "/etc/consul.d/server"
+
+consul_client_config_dir: "/etc/consul.d/client"

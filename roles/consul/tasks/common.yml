@@ -1,0 +1,11 @@
+---
+# Download and extract specific consul version
+- name: Download and extract consul archive
+  unarchive:
+    src: "{{ download_url }}"
+    dest: "{{ consul_path }}"
+    copy: no
+    mode: 0755
+    owner: root
+    group: root
+  tags: [download_extract]
