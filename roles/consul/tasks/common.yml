@@ -1,4 +1,45 @@
 ---
+#Change hostname of remote server
+- name: Change hostname of remote server
+  hostname:
+    name: "consul-server-1"
+  tags: [change_hostname]
+
+# Make change in hosts file
+- name: Add hostname to /etc/hosts file
+  lineinfile:
+    dest: /etc/hosts
+    regexp: '^127\.0\.0\.1[ \t]+localhost'
+    line: '127.0.0.1 localhost consul-server-1'
+    state: present
+  tags: [change_hosts_file]
+
+# Install consul dependencies
+- name: Consul | Install dependencies
+  apt:
+    pkg: "{{ item }}"
+    update_cache: true
+    cache_valid_time: 600
+  with_items: "{{ consul_required_libs }}"
+  tags: [install_consul_dependencies]
+
+# Create consul user group
+- name: Create consul group
+  group:
+    name: "{{ consul_group }}"
+    system: yes
+  tags: [create_consul_group]
+
+# Create consul user as a system user
+- name: Create consul user
+  user:
+    name: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    shell: /bin/bash
+    system: yes
+    createhome: no
+  tags: [create_consul_user]
+
 # Download and extract specific consul version
 - name: Download and extract consul archive
   unarchive:
@@ -9,3 +50,18 @@
     owner: root
     group: root
   tags: [download_extract]
+
+# Create consul data and config directories
+- name: Create consul data and configuration directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    recurse: no
+  with_items:
+    - "{{ consul_data_dir }}"
+    - "{{ consul_bootstrap_config_dir }}"
+    - "{{ consul_server_config_dir }}"
+    - "{{ consul_client_config_dir }}"
+  tags: [create_consul_data_config_dir]
