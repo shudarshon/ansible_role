@@ -1,17 +1,22 @@
 {
-    "bootstrap_expect": 3,
-    "server": true,
-    "datacenter": "{{ datacenter }}",
-    "data_dir": "{{ consul_data_dir }}",
-    "encrypt": "{{ consul_security_token }}",
-    "log_level": "INFO",
-    "enable_syslog": true,
-    "leave_on_terminate": false,
-    "skip_leave_on_interrupt": true,
-    "rejoin_after_leave": true,
-    "retry_interval": "30s",
-    "start_join": [
-      "172.31.83.150",
-      "172.31.87.159"
-    ]
+  "bootstrap_expect": 3,
+  "server": true,
+  "datacenter": "{{ datacenter }}",
+  "data_dir": "{{ consul_data_dir }}",
+  "encrypt": "{{ consul_security_token }}",
+  "log_level": "INFO",
+  "enable_syslog": true,
+  "leave_on_terminate": false,
+  "skip_leave_on_interrupt": true,
+  "rejoin_after_leave": true,
+  "retry_interval": "30s",
+  "start_join": [
+    "192.168.1.11:8301",
+    "192.168.1.12:8301",
+    "192.168.1.13:8301",
+    "192.168.1.14:8301",
+    "192.168.1.15:8301",
+    "192.168.1.16:8301",
+    "192.168.1.17:8301"
+  ]
 }
