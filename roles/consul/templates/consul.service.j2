@@ -4,16 +4,16 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
-User="{{ consul_user }}"
-Group="{{ consul_group }}"
-PIDFile=/run/consul.pid
+#User="{{ consul_user }}"
+#Group="{{ consul_group }}"
+#PIDFile=/run/consul.pid
 EnvironmentFile=-/etc/sysconfig/consul
 Environment=GOMAXPROCS=2
 Restart=on-failure
-ExecStart="{{ consul_path }}/consul" agent $OPTIONS -config-dir=/etc/consul.d/client
+ExecStart="{{ consul_path }}/consul" agent $OPTIONS -config-dir=/etc/consul.d/server
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGINT
-TimeoutStopSec=5
+TimeoutStopSec=3
 
 [Install]
 WantedBy=multi-user.target

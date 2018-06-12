@@ -2,7 +2,8 @@
 #Change hostname of remote server
 - name: Change hostname of remote server
   hostname:
-    name: "consul-server-1"
+    #name: "consul-server-1" "{{ groups['host'] }}"
+    name: "{{ hostvars['host'].hostname }}"
   tags: [change_hostname]
 
 # Make change in hosts file
@@ -10,7 +11,7 @@
   lineinfile:
     dest: /etc/hosts
     regexp: '^127\.0\.0\.1[ \t]+localhost'
-    line: '127.0.0.1 localhost consul-server-1'
+    line: "127.0.0.1 localhost {{ hostvars['host'].hostname }}"
     state: present
   tags: [change_hosts_file]
 
@@ -65,3 +66,21 @@
     - "{{ consul_server_config_dir }}"
     - "{{ consul_client_config_dir }}"
   tags: [create_consul_data_config_dir]
+
+# Copy consul server configuration
+- name: Copy consul server configuration
+  template:
+    src: "bootstrap.json.j2"
+    dest: "{{ consul_server_config_dir }}/config.json"
+  tags: [copy_server_config]
+
+# Installing systemd script for managing consul service
+- name: Create systemd service script for consul
+  template:
+    src: "consul.service.j2"
+    dest: "/lib/systemd/system/consul.service"
+  notify:
+    - reload systemd
+    - enable consul
+    - restart consul
+  tags: [systemd_script_install]

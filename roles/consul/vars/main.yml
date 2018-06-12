@@ -17,3 +17,5 @@ consul_client_config_dir: "/etc/consul.d/client"
 consul_required_libs:
   - unzip
   - ca-certificates
+
+#consul_infra_var: "{{ groups['host'] }}"
