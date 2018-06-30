@@ -1,9 +1,0 @@
----
-- name: restart consul
-  service: name=consul state=restarted
-
-- name: enable consul
-  service: name=consul state=started enabled=yes
-
-- name: reload systemd
-  command: systemctl daemon-reload
