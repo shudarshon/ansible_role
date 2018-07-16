@@ -1,6 +1,0 @@
-#!/bin/bash
-while read i;
-do
-    wget $i -P {{jenkins_home_path}}/plugins;
-done < plugins.txt
-chown -R {{tomcat_user}}:{{tomcat_group}} {{jenkins_home_path}}/plugins

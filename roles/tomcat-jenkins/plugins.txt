@@ -1,3 +1,0 @@
-https://updates.jenkins-ci.org/latest/mesos.hpi
-https://updates.jenkins-ci.org/latest/hipchat.hpi
-https://updates.jenkins-ci.org/latest/pipeline-build-step.hpi
