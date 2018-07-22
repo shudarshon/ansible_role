@@ -1,0 +1,97 @@
+---
+-
+  group:
+    name: "{{ tomcat_group }}"
+    system: true
+  name: "Create tomcat group"
+  tags:
+    - create_tomcat_group
+-
+  name: "Create tomcat user"
+  tags:
+    - create_tomcat_user
+  user:
+    createhome: false
+    group: "{{ tomcat_group }}"
+    home: "{{tomcat_home_dir}}"
+    name: "{{ tomcat_user }}"
+    shell: /bin/bash
+    system: true
+-
+  name: "Download and extract tomcat archive"
+  tags:
+    - download_extract
+  unarchive:
+    copy: false
+    dest: /opt
+    group: "{{ tomcat_group }}"
+    mode: 488
+    owner: root
+    src: "{{ tomcat_url }}"
+-
+  file:
+    group: "{{ tomcat_group }}"
+    owner: "{{ tomcat_user }}"
+    path: "{{tomcat_home_dir}}/{{item}}"
+    recurse: true
+  name: "Make the tomcat user the owner of the webapps, work, temp, and logs directories"
+  tags:
+    - web_work_temp_logs_perm
+  with_items:
+    - webapps
+    - work
+    - temp
+    - logs
+-
+  file:
+    mode: g+r
+    path: "{{tomcat_home_dir}}/conf"
+    recurse: true
+    state: directory
+  name: "Grant Tomcat group read access to the conf directory"
+  tags:
+    - conf_g+r_perm
+-
+  file:
+    mode: g+x
+    path: "{{tomcat_home_dir}}/conf"
+    state: directory
+  name: "Grant Tomcat group execute access to the conf directory itself"
+  tags:
+    - conf_g+x_perm
+-
+  name: "Create tomcat-users.xml"
+  tags:
+    - apply_tomcat_user_role
+  template:
+    dest: "{{tomcat_home_dir}}/conf/tomcat-users.xml"
+    src: tomcat-users.xml.j2
+-
+  name: "Replace ip restriction of manager & host-manager role"
+  tags:
+    - remove_tomcat_role_ip_restriction
+  template:
+    dest: "{{ item }}"
+    src: context.xml.j2
+  with_items:
+    - "{{tomcat_home_dir}}/webapps/host-manager/META-INF/context.xml"
+    - "{{tomcat_home_dir}}/webapps/manager/META-INF/context.xml"
+-
+  file:
+    dest: "{{ tomcat_app_path }}"
+    src: "{{ tomcat_home_dir }}"
+    state: link
+  name: "Symlink Tomcat to current version"
+  tags:
+    - create_app_link
+-
+  name: "Create systemd service script for Tomcat"
+  notify:
+    - "reload systemd"
+    - "enable tomcat"
+    - "restart tomcat"
+  tags:
+    - systemd_script_install
+  template:
+    dest: /lib/systemd/system/tomcat.service
+    src: tomcat.service.j2

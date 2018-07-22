@@ -1,0 +1,33 @@
+---
+-
+  apt_repository: "repo=ppa:webupd8team/java state=present"
+  become: true
+  name: "Add java ppa repository"
+  tags:
+    - add_ppa
+-
+  block:
+    -
+      apt_key: "id=0xC2518248EEA14886 keyserver=keyserver.ubuntu.com state=present"
+      become: true
+      name: "Ensure the webupd8 launchpad apt repository key is present"
+    -
+      apt_repository: "repo=\"{{ item }} http://ppa.launchpad.net/webupd8team/java/ubuntu trusty main\" update_cache=yes state=present"
+      become: true
+      name: "Ensure the webupd8 launchpad apt repository is present"
+      with_items:
+        - deb
+        - deb-src
+  when: "ansible_distribution == 'Debian'"
+-
+  become: true
+  debconf: "name='oracle-java{{ oracle_java_version }}-installer' question='shared/accepted-oracle-license-v1-1' value='true' vtype='select'"
+  name: "Set license as accepted"
+  tags:
+    - accept_license
+-
+  apt: "name=\"oracle-java{{ oracle_java_version }}-installer\" state={{ oracle_java_state }} cache_valid_time={{ oracle_java_cache_valid_time }} update_cache=yes"
+  become: true
+  name: "Ensure Java is installed"
+  tags:
+    - install_java
