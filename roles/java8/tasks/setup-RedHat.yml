@@ -1,45 +1,35 @@
 ---
-- block:
-    - name: Download Java
-      get_url:
-        url: "{{download_url}}"
-        dest: "{{java_package_path}}"
-        headers: 'Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie; --no-check-certificate'
-
-# Create java home directory
-- name: Create java home directory path
-  #command: "mkdir -p {{ java_src_root }}"
-  file:
-    path: "{{ java_src_root }}"
-    state: directory
-    mode: 0755    
-  tags: [create_java_home_dir]
-
-# Extract java source code
-- name: Extract java source file
-  command: "chdir=/tmp /bin/tar xvf {{ java_package_path }} -C /tmp creates={{ java_build_path }}"
-  tags: [extract_java_src]
-
-# Create java source code directory
-- name: Create java source directory
-  command: "cp -r {{ java_build_path }} {{ java_home }}"
-  tags: [create_java_home_dir]
-
-# Set oracle java as default version
-- name: Set Oracle Java version as default
+-
+  name: "Install necssary package"
+  yum:
+    name: wget
+    state: installed
+-
+  command: "wget --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie\" \"{{download_url}}\" -P /tmp"
+  name: "Download java source file"
+  tags:
+    - download_java
+-
+  name: "RedHat | Install Java Oracle"
+  register: rpm_installation
+  yum:
+    name: "{{java_package_path}}"
+    state: installed
+-
   alternatives:
     link: /usr/bin/java
     name: java
     path: "{{ java_home }}/bin/java"
-  tags: [ make_default ]
-  become: yes
-
-# Remove java source tar
-- name: Remove artifact
+  become: true
+  name: "Set Oracle Java version as default"
+  tags:
+    - make_default
+-
   file:
     path: "{{ item }}"
     state: absent
+  name: "Remove artifact"
+  tags:
+    - remove_artifact
   with_items:
     - "{{ java_package_path }}"
-    - "{{ java_build_path }}"
-  tags: [remove_artifact]
