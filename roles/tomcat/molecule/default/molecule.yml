@@ -8,6 +8,21 @@ lint:
   options:
     config-file: molecule/default/yamllint.yml
 platforms:
+  - name: CentOS
+    image: solita/centos-systemd
+    image_version: latest
+    privileged: True
+    command: '/sbin/init'
+    security_opts:
+      - seccomp=unconfined
+    tmpfs:
+      - /tmp
+      - /run
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    capabilities:
+      - SYS_ADMIN
   - name: Ubuntu
     image: solita/ubuntu-systemd
     image_version: latest
