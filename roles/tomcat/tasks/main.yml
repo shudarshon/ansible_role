@@ -3,10 +3,10 @@
   include_vars: "{{ ansible_os_family }}.yml"
   name: "Include OS-Specific variables"
 -
-  include_tasks: setup-RedHat.yml
+  include_tasks: setup-java-RedHat.yml
   when: "ansible_os_family == 'RedHat'"
 -
-  include_tasks: setup-Debian.yml
+  include_tasks: setup-java-Debian.yml
   when: "ansible_os_family == 'Debian'"
 
 -
