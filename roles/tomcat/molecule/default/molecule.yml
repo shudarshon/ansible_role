@@ -8,14 +8,21 @@ lint:
   options:
     config-file: molecule/default/yamllint.yml
 platforms:
-  - name: centos-7
-    image: milcom/centos7-systemd
+  - name: Ubuntu
+    image: solita/ubuntu-systemd
     image_version: latest
     privileged: True
-  - name: ubuntu-16.04
-    image: ubuntu
-    image_version: xenial
-    privileged: True
+    command: '/sbin/init'
+    security_opts:
+      - seccomp=unconfined
+    tmpfs:
+      - /tmp
+      - /run
+      - /run/lock
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    capabilities:
+      - SYS_ADMIN
 provisioner:
   name: ansible
   lint:
