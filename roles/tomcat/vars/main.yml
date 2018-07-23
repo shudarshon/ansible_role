@@ -12,10 +12,6 @@ tomcat_url: "https://archive.apache.org/dist/tomcat/tomcat-{{ tomcat_version[0:1
 tomcat_home_dir: "/opt/{{ tomcat_build_name }}"
 tomcat_app_path: /usr/share/tomcat
 
-# Java home directry
-
-tomcat_java_home: /usr/lib/jvm/java-8-oracle
-
 # Tomcat user and group
 
 tomcat_user: tomcat
