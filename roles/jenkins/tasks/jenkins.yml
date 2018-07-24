@@ -1,0 +1,38 @@
+---
+# Download Jenkins war
+- name: Download Jenkins war file
+  become_user: "{{ tomcat_user }}"
+  get_url:
+    url: "{{ jenkins_url }}"
+    dest: "{{tomcat_home_dir}}/webapps/ROOT.war"
+    mode: 0640
+  tags: [get_jenkins]
+
+# Adding JENKINS_HOME path in tomcat
+- name: Adding JENKINS_HOME in tomcat configuration
+  become_user: "{{ tomcat_user }}"
+  template:
+    src: conf-context.xml.j2
+    dest: "{{tomcat_home_dir}}/conf/context.xml"
+  #notify: restart tomcat
+  tags: [add_jenkins_home_config]
+
+# Create app directory symbolic link
+- name: Symlink Tomcat to current version
+  file:
+    src: "{{ tomcat_home_dir }}"
+    dest: "{{ tomcat_app_path }}"
+    state: link
+  tags: [create_app_link]
+
+# Installing systemd script for managin tomcat service
+- name: Create systemd service script for Tomcat
+  template:
+    src: "tomcat.service.j2"
+    dest: "/lib/systemd/system/tomcat.service"
+  notify:
+    - reload systemd
+    - enable tomcat
+    - restart tomcat
+    #- restart nginx
+  tags: [systemd_script_install]

@@ -1,0 +1,71 @@
+---
+-
+  name: "Install necssary package"
+  yum:
+    name: wget
+    state: installed
+- name: Enable nginx repo.
+  template:
+    src: nginx.repo.j2
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: root
+    mode: 0644
+  when: true
+  tags: [install_nginx]
+
+- name: Ensure nginx is installed.
+  package:
+    name: nginx
+    state: present
+
+- name: Remove nginx default config file
+  file:
+    path: "{{ app_config_path_link }}"
+    state: absent
+  tags: [remove_nginx_default_config]
+
+# this task runs 'getenforce' and registers the result into the "sestatus" variable
+# changed_when: false tells ansible never to mark this task as "changed"
+- name: Check SELinux status
+  command: getenforce
+  register: sestatus
+  changed_when: false
+  tags: [check_selinux_status]
+
+# Allow SeLinux
+- name: Allow SeLinux permission
+  shell: "setsebool -P httpd_can_network_connect 1"
+  tags: [allow_selinux]
+  when: '"Enabled" in sestatus.stdout or "Enforcing" in sestatus.stdout'
+-
+  command: "wget --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie\" \"{{download_url}}\" -P /tmp"
+  name: "Download java source file"
+  args:
+    warn: False
+  tags:
+    - download_java
+-
+  name: "RedHat | Install Java Oracle"
+  register: rpm_installation
+  yum:
+    name: "{{java_package_path}}"
+    state: installed
+-
+  alternatives:
+    link: /usr/bin/java
+    name: java
+    path: "{{ java_home }}/bin/java"
+  become: true
+  name: "Set Oracle Java version as default"
+  tags:
+    - make_default
+-
+  file:
+    path: "{{ item }}"
+    state: absent
+  name: "Remove artifact"
+  tags:
+    - remove_artifact
+  with_items:
+    - "{{ java_package_path }}"
