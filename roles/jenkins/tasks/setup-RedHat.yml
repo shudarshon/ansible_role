@@ -4,45 +4,47 @@
   yum:
     name: wget
     state: installed
-- name: Enable nginx repo.
+-
+  name: "Enable nginx repo."
+  tags:
+    - install_nginx
   template:
-    src: nginx.repo.j2
     dest: /etc/yum.repos.d/nginx.repo
-    owner: root
     group: root
-    mode: 0644
+    mode: 420
+    owner: root
+    src: nginx.repo.j2
   when: true
-  tags: [install_nginx]
-
-- name: Ensure nginx is installed.
-  package:
+-
+  name: "Ensure nginx is installed."
+  yum:
     name: nginx
     state: present
-
-- name: Remove nginx default config file
+-
   file:
     path: "{{ app_config_path_link }}"
     state: absent
-  tags: [remove_nginx_default_config]
-
-# this task runs 'getenforce' and registers the result into the "sestatus" variable
-# changed_when: false tells ansible never to mark this task as "changed"
-- name: Check SELinux status
-  command: getenforce
-  register: sestatus
-  changed_when: false
-  tags: [check_selinux_status]
-
-# Allow SeLinux
-- name: Allow SeLinux permission
-  shell: "setsebool -P httpd_can_network_connect 1"
-  tags: [allow_selinux]
-  when: '"Enabled" in sestatus.stdout or "Enforcing" in sestatus.stdout'
+  name: "Remove nginx default config file"
+  tags:
+    - remove_nginx_default_config
 -
+  changed_when: false
+  command: getenforce
+  name: "Check SELinux status"
+  register: sestatus
+  tags:
+    - check_selinux_status
+-
+  name: "Allow SeLinux permission"
+  shell: "setsebool -P httpd_can_network_connect 1"
+  tags:
+    - allow_selinux
+  when: "\"Enabled\" in sestatus.stdout or \"Enforcing\" in sestatus.stdout"
+-
+  args:
+    warn: false
   command: "wget --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie\" \"{{download_url}}\" -P /tmp"
   name: "Download java source file"
-  args:
-    warn: False
   tags:
     - download_java
 -

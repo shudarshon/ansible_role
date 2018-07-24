@@ -1,9 +1,11 @@
 ---
-- name: Install nginx
-  package:
-     name: nginx
-     state: latest
-  tags: [install_nginx]
+-
+  name: "Install nginx"
+  apt:
+    name: nginx
+    state: latest
+  tags:
+    - install_nginx
 -
   apt_repository: "repo=ppa:webupd8team/java state=present"
   become: true

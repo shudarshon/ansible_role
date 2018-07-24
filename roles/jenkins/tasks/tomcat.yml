@@ -1,78 +1,94 @@
 ---
-
-# Test if java home is defined
-- name: Ensure tomcat_java_home is defined
-  fail: msg="You must define the tomcat_java_home variable"
-  when: tomcat_java_home is not defined
-
-
-# Create tomcat user group
-- name: Create tomcat group
+-
   group:
     name: "{{ tomcat_group }}"
-    system: yes
-  tags: [create_tomcat_group]
-
-# Create tomcat user as a system user
-- name: Create tomcat user
+    system: true
+  name: "Create tomcat group"
+  tags:
+    - create_tomcat_group
+-
+  name: "Create tomcat user"
+  tags:
+    - create_tomcat_user
   user:
+    createhome: true
+    generate_ssh_key: true
     group: "{{ tomcat_group }}"
+    home: "{{tomcat_home_dir}}"
     name: "{{ tomcat_user }}"
     shell: /bin/bash
-    home: "{{tomcat_home_dir}}"
-    system: yes
-    createhome: yes
-    generate_ssh_key: yes
     ssh_key_bits: 2048
     ssh_key_file: .ssh/id_rsa
-  tags: [create_tomcat_user]
-
-# add ssh config for skipping known hosts
-- name: Add ssh config
+    system: true
+-
   become_user: "{{ tomcat_user }}"
+  name: "Add ssh config"
+  tags:
+    - add_ssh_config
   template:
-    src: ssh-config.j2
     dest: "{{tomcat_home_dir}}/.ssh/config"
-    mode: 0400
-  tags: [add_ssh_config]
-
-# Download and extract specific tomcat version
-- name: Download and extract tomcat archive
+    mode: 256
+    src: ssh-config.j2
+-
+  name: "Download and extract tomcat archive"
+  tags:
+    - download_extract
   unarchive:
-    src: "{{ tomcat_url }}"
+    copy: false
     dest: "{{tomcat_home_dir}}"
-    copy: no
+    extra_opts:
+      - "--strip-components=1"
+    group: "{{ tomcat_group }}"
     mode: 0750
     owner: "{{ tomcat_user }}"
-    group: "{{ tomcat_group }}"
-    extra_opts: ['--strip-components=1']
-  tags: [download_extract]
-
-# Replace tomcat-users xml for applying tomcat roles
-- name: Create tomcat-users.xml
+    src: "{{ tomcat_url }}"
+-
   become_user: "{{ tomcat_user }}"
+  name: "Create tomcat-users.xml"
+  tags:
+    - apply_tomcat_user_role
   template:
-    src: tomcat-users.xml.j2
     dest: "{{tomcat_home_dir}}/conf/tomcat-users.xml"
-  #notify: restart tomcat
-  tags: [apply_tomcat_user_role]
-
-# if you want to use host manger role then uncomment
-
-# Changing IP restricion of tomcat app server from localhost to any IP
-#- name: Replace ip restriction of manager & host-manager role
-#  become_user: "{{ tomcat_user }}"
-#  template:
-#    src: context.xml.j2
-#    dest: "{{ item }}"
-  #notify: restart tomcat
-#  with_items:
-#    - "{{tomcat_home_dir}}/webapps/host-manager/META-INF/context.xml"
-#    - "{{tomcat_home_dir}}/webapps/manager/META-INF/context.xml"
-#  tags: [remove_tomcat_role_ip_restriction]
-
-# Truncate webapps directory
-- name: Remove everything under tomcat webapps directory
+    src: tomcat-users.xml.j2
+-
   become_user: "{{ tomcat_user }}"
+  name: "Remove everything under tomcat webapps directory"
   shell: "rm -rf {{tomcat_home_dir}}/webapps/*"
-  tags: [remove_webapps_file]
+  tags:
+    - remove_webapps_file
+-
+  become_user: "{{ tomcat_user }}"
+  get_url:
+    dest: "{{tomcat_home_dir}}/webapps/ROOT.war"
+    mode: 416
+    url: "{{ jenkins_url }}"
+  name: "Download Jenkins war file"
+  tags:
+    - get_jenkins
+-
+  become_user: "{{ tomcat_user }}"
+  name: "Adding JENKINS_HOME in tomcat configuration"
+  tags:
+    - add_jenkins_home_config
+  template:
+    dest: "{{tomcat_home_dir}}/conf/context.xml"
+    src: conf-context.xml.j2
+-
+  file:
+    dest: "{{ tomcat_app_path }}"
+    src: "{{ tomcat_home_dir }}"
+    state: link
+  name: "Symlink Tomcat to current version"
+  tags:
+    - create_app_link
+-
+  name: "Create systemd service script for Tomcat"
+  notify:
+    - "reload systemd"
+    - "enable tomcat"
+    - "restart tomcat"
+  tags:
+    - systemd_script_install
+  template:
+    dest: /lib/systemd/system/tomcat.service
+    src: tomcat.service.j2
