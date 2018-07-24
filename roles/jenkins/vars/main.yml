@@ -1,7 +1,6 @@
 ---
 # Tomcat Version Download
 
-#tomcat_version: "8.5.9"
 tomcat_version: "9.0.4"
 tomcat_build_name: "apache-tomcat-{{ tomcat_version }}"
 tomcat_package: "{{ tomcat_build_name }}.tar.gz"
@@ -14,10 +13,6 @@ jenkins_password_path: "{{ jenkins_home_path }}/secrets/initialAdminPassword"
 tomcat_home_dir: /opt/tomcat
 tomcat_app_path: /usr/share/tomcat
 jenkins_home_path: /opt/tomcat
-
-# Java home directry
-
-tomcat_java_home: /usr/lib/jvm/java-8-oracle
 
 # Tomcat user and group
 
@@ -73,3 +68,9 @@ tomcat_users: [
 
 admin_username: admin         #later this one will be colected from ansible vault
 admin_password: adminsecret   #later this one will be colected from ansible vault
+
+# Web Application Configurations
+
+app_port: 8080
+access_log: /var/log/nginx/access.log
+error_log: /var/log/nginx/error.log
