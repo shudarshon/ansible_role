@@ -1,5 +1,10 @@
 ---
 -
+  name: "Install network/socket investigation tool"
+  package:
+    name: net-tools
+    state: present
+-
   group:
     name: "{{ tomcat_group }}"
     system: true
@@ -25,7 +30,7 @@
     copy: false
     dest: /opt
     group: "{{ tomcat_group }}"
-    mode: 488
+    mode: 0755
     owner: root
     src: "{{ tomcat_url }}"
 -
