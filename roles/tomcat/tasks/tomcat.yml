@@ -30,7 +30,7 @@
     copy: false
     dest: /opt
     group: "{{ tomcat_group }}"
-    mode: 0755
+    mode: 0750
     owner: root
     src: "{{ tomcat_url }}"
 -
