@@ -1,12 +1,5 @@
 ---
 -
-  name: "Install nginx"
-  apt:
-    name: nginx
-    state: latest
-  tags:
-    - install_nginx
--
   apt_repository: "repo=ppa:webupd8team/java state=present"
   become: true
   name: "Add java ppa repository"
@@ -38,3 +31,10 @@
   name: "Ensure Java is installed"
   tags:
     - install_java
+-
+  name: "Install nginx"
+  apt:
+    name: nginx
+    state: present
+  tags:
+    - install_nginx
