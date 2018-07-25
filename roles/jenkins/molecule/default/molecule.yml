@@ -24,9 +24,9 @@ platforms:
     capabilities:
       - SYS_ADMIN
     exposed_ports:
-      - 8080/tcp
+      - 80/tcp
     published_ports:
-      - 0.0.0.0:8080:8080/tcp
+      - 0.0.0.0:80:80/tcp
   - name: Ubuntu
     image: solita/ubuntu-systemd
     image_version: latest
@@ -43,9 +43,9 @@ platforms:
     capabilities:
       - SYS_ADMIN
     exposed_ports:
-      - 8080/tcp
+      - 80/tcp
     published_ports:
-      - 0.0.0.0:8081:8080/tcp
+      - 0.0.0.0:81:80/tcp
 provisioner:
   name: ansible
   lint:
