@@ -1,5 +1,10 @@
 ---
 -
+  name: "Install necssary package"
+  yum:
+    name: wget
+    state: present
+-
   name: "Enable nginx repo."
   tags:
     - install_nginx
