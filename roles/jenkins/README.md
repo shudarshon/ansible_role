@@ -1,6 +1,6 @@
 # About
 
-This repository contains ansible role for tomcat setup. Molecule is used to perform testing of ansible role in docker image with Testinfra. Supported OS:
+This repository contains ansible role for Jenkins setup. Molecule is used to perform testing of ansible role in docker image with Testinfra. Supported OS:
 
 * Ubuntu/Debian
 * RedHat/CentOS
@@ -13,8 +13,7 @@ This repository contains ansible role for tomcat setup. Molecule is used to perf
 * virtualenv
 * molecule
 * ansible
-* docker (if ansible >= 2.7)
-* docker-py (if ansible < 2.7)
+* docker
 
 # Usage
 
