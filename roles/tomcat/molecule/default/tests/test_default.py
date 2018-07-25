@@ -15,19 +15,19 @@ def test_tomcat_user_existence(host):
 
     assert user.exists
     assert user.shell == '/bin/bash'
-    assert user.home == '/opt/apache-tomcat-9.0.4'
+    assert user.home == '/opt/tomcat'
     assert user.group == 'tomcat'
 
 
 def test_tomcat_home_directory(host):
-    homedir = host.file('/opt/apache-tomcat-9.0.4')
+    homedir = host.file('/opt/tomcat')
 
     assert homedir.is_directory
     assert oct(homedir.mode) == '0755'
 
 
 def test_tomcat_logs_directory(host):
-    config_dir = host.file('/opt/apache-tomcat-9.0.4/logs')
+    config_dir = host.file('/opt/tomcat/logs')
 
     assert config_dir.is_directory
     assert config_dir.user == 'tomcat'
@@ -36,7 +36,7 @@ def test_tomcat_logs_directory(host):
 
 
 def test_tomcat_temp_directory(host):
-    config_dir = host.file('/opt/apache-tomcat-9.0.4/temp')
+    config_dir = host.file('/opt/tomcat/temp')
 
     assert config_dir.is_directory
     assert config_dir.user == 'tomcat'
@@ -45,7 +45,7 @@ def test_tomcat_temp_directory(host):
 
 
 def test_tomcat_webapps_directory(host):
-    config_dir = host.file('/opt/apache-tomcat-9.0.4/webapps')
+    config_dir = host.file('/opt/tomcat/webapps')
 
     assert config_dir.is_directory
     assert config_dir.user == 'tomcat'
@@ -54,7 +54,7 @@ def test_tomcat_webapps_directory(host):
 
 
 def test_tomcat_work_directory(host):
-    config_dir = host.file('/opt/apache-tomcat-9.0.4/work')
+    config_dir = host.file('/opt/tomcat/work')
 
     assert config_dir.is_directory
     assert config_dir.user == 'tomcat'
