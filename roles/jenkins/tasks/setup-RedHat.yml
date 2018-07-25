@@ -1,10 +1,5 @@
 ---
 -
-  name: "Install necssary package"
-  yum:
-    name: wget
-    state: installed
--
   name: "Enable nginx repo."
   tags:
     - install_nginx
@@ -29,6 +24,7 @@
     - remove_nginx_default_config
 -
   changed_when: false
+  ignore_errors: yes
   command: getenforce
   name: "Check SELinux status"
   register: sestatus
@@ -40,6 +36,7 @@
   tags:
     - allow_selinux
   when: "\"Enabled\" in sestatus.stdout or \"Enforcing\" in sestatus.stdout"
+  ignore_errors: yes
 -
   args:
     warn: false
