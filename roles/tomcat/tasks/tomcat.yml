@@ -1,9 +1,12 @@
 ---
 -
-  name: "Install network/socket investigation tool"
   package:
-    name: net-tools
+    name: "{{item}}"
     state: present
+  name: "Install test dependencies"
+  tags:
+    - install_dependencies
+  with_items: "{{ test_required_libs  }}"
 -
   group:
     name: "{{ tomcat_group }}"
@@ -16,22 +19,43 @@
   tags:
     - create_tomcat_user
   user:
-    createhome: false
+    createhome: true
+    generate_ssh_key: true
     group: "{{ tomcat_group }}"
     home: "{{tomcat_home_dir}}"
     name: "{{ tomcat_user }}"
     shell: /bin/bash
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
     system: true
+-
+  file:
+    mode: 0755
+    path: "{{tomcat_home_dir}}"
+    state: directory
+  name: "Set tomcat home directory permission"
+  tags:
+    - set_tomcat_home_permission
+-
+  become_user: "{{ tomcat_user }}"
+  name: "Add ssh config"
+  tags:
+    - add_ssh_config
+  template:
+    dest: "{{tomcat_home_dir}}/.ssh/config"
+    mode: 256
+    src: ssh-config.j2
 -
   name: "Download and extract tomcat archive"
   tags:
     - download_extract
   unarchive:
     copy: false
-    dest: /opt
+    dest: "{{tomcat_home_dir}}"
+    extra_opts:
+      - "--strip-components=1"
     group: "{{ tomcat_group }}"
-    mode: 0750
-    owner: root
+    owner: "{{ tomcat_user }}"
     src: "{{ tomcat_url }}"
 -
   file:
@@ -65,6 +89,7 @@
   tags:
     - conf_g+x_perm
 -
+  become_user: "{{ tomcat_user }}"
   name: "Create tomcat-users.xml"
   tags:
     - apply_tomcat_user_role
@@ -91,10 +116,6 @@
     - create_app_link
 -
   name: "Create systemd service script for Tomcat"
-  notify:
-    - "reload systemd"
-    - "enable tomcat"
-    - "restart tomcat"
   tags:
     - systemd_script_install
   template:
