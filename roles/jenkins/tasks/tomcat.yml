@@ -93,10 +93,6 @@
     - create_app_link
 -
   name: "Create systemd service script for Tomcat"
-  notify:
-    - "reload systemd"
-    - "enable tomcat"
-    - "restart tomcat"
   tags:
     - systemd_script_install
   template:
