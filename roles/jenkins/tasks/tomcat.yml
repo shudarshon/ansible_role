@@ -1,5 +1,13 @@
 ---
 -
+  package:
+    name: "{{item}}"
+    state: present
+  name: "Install test dependencies"
+  tags:
+    - install_dependencies
+  with_items: "{{ test_required_libs  }}"
+-
   group:
     name: "{{ tomcat_group }}"
     system: true
@@ -54,6 +62,8 @@
   become_user: "{{ tomcat_user }}"
   name: "Remove everything under tomcat webapps directory"
   shell: "rm -rf {{tomcat_home_dir}}/webapps/*"
+  args:
+    warn: false
   tags:
     - remove_webapps_file
 -
