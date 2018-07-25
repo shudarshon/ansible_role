@@ -1,0 +1,38 @@
+---
+-
+  group:
+    name: "{{ jenkins_group }}"
+    system: true
+  name: "Create jenkins group"
+  tags:
+    - create_jenkins_group
+-
+  name: "Create jenkins user"
+  tags:
+    - create_jenkins_user
+  user:
+    createhome: true
+    generate_ssh_key: true
+    group: "{{ jenkins_group }}"
+    home: "{{jenkins_home_dir}}"
+    name: "{{ jenkins_user }}"
+    shell: /bin/bash
+    ssh_key_bits: 2048
+    ssh_key_file: .ssh/id_rsa
+    system: true
+-
+  authorized_key:
+    key: "{{ lookup('file', './files/id_rsa.pub') }}"
+    state: present
+    user: "{{ jenkins_ssh_user }}"
+  become_user: "{{ jenkins_user }}"
+  name: "Set authorized key from jenkins master public key"
+-
+  become_user: "{{ jenkins_user }}"
+  name: "Add ssh config"
+  tags:
+    - add_ssh_config
+  template:
+    dest: "{{jenkins_home_dir}}/.ssh/config"
+    mode: 256
+    src: ssh-config.j2
