@@ -1,4 +1,9 @@
 ---
+# Dependency
+test_required_libs:
+    - net-tools
+    - openssh-clients
+
 # Tomcat Version Download
 
 tomcat_version: "9.0.4"
