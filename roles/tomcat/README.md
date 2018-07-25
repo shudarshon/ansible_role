@@ -13,8 +13,7 @@ This repository contains ansible role for tomcat setup. Molecule is used to perf
 * virtualenv
 * molecule
 * ansible
-* docker (if ansible >= 2.7)
-* docker-py (if ansible < 2.7)
+* docker
 
 # Usage
 
