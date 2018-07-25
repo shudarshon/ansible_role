@@ -28,7 +28,22 @@
     remote_src: false
     src: nginx.conf.j2
 -
+  file:
+    dest: "{{ app_config_path_link }}"
+    mode: 420
+    src: "{{ app_config_path }}"
+    state: link
+  name: "Install symlink to application config file"
+  tags:
+    - symlink_nginx_app_config
+-
   name: "Install application configuration in nginx sites directory"
+  notify:
+    - "reload systemd"
+    - "enable tomcat"
+    - "restart tomcat"
+    - "enable nginx"
+    - "restart nginx"
   tags:
     - install_nginx_application_config
   template:
@@ -36,18 +51,3 @@
     mode: 420
     remote_src: false
     src: app.conf.j2
--
-  file:
-    dest: "{{ app_config_path_link }}"
-    mode: 420
-    src: "{{ app_config_path }}"
-    state: link
-  name: "Install symlink to application config file"
-  notify:
-    - "reload systemd"
-    - "enable tomcat"
-    - "restart tomcat"
-    - "start nginx"
-    - "restart nginx"
-  tags:
-    - symlink_nginx_app_config
