@@ -42,7 +42,7 @@ def test_tomcat_ssh_config(host):
 
 
 def test_tomcat_port(host):
-    port = host.socket('tcp://0.0.0.0:8080')
+    port = host.socket('tcp://0.0.0.0:80')
 
     assert port.is_listening
 
