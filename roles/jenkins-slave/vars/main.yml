@@ -8,4 +8,4 @@ jenkins_home_dir: /var/lib/jenkins
 jenkins_user: jenkins
 jenkins_group: jenkins
 
-jenkins_ssh_user: tomcat  #name of remote host who will ssh into slave {jenkins/tomcat}
+jenkins_ssh_user: jenkins  #username on the remote host whose authorized_keys file will be modified
