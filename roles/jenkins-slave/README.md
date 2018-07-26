@@ -17,7 +17,9 @@ This repository contains ansible role for Jenkins slave setup. Molecule is used 
 
 # Usage
 
-Make sure you have gcc installed in the system. Install pip in your system then install virtualenv globally. Then create python environment in the project root as following,
+* Put Jenkins master key in files folder named as id_rsa.pub
+
+* Make sure you have gcc installed in the system. Install pip in your system then install virtualenv globally. Then create python environment in the project root as following,
 
 ```
 $ virtualenv --python=/usr/bin/python .venv
