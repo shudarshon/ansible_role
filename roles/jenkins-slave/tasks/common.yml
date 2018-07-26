@@ -1,5 +1,13 @@
 ---
 -
+  package:
+    name: "{{item}}"
+    state: present
+  name: "Install test dependencies"
+  tags:
+    - install_dependencies
+  with_items: "{{ test_required_libs  }}"
+-
   group:
     name: "{{ jenkins_group }}"
     system: true
