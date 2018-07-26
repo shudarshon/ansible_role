@@ -1,7 +1,7 @@
 ---
 # Tomcat installation directory
 
-jenkins_home_path: /var/lib/jenkins
+jenkins_home_dir: /var/lib/jenkins
 
 # Tomcat user and group
 
