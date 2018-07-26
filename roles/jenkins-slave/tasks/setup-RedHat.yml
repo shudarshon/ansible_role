@@ -5,44 +5,6 @@
     name: wget
     state: present
 -
-  name: "Enable nginx repo."
-  tags:
-    - install_nginx
-  template:
-    dest: /etc/yum.repos.d/nginx.repo
-    group: root
-    mode: 420
-    owner: root
-    src: nginx.repo.j2
-  when: true
--
-  name: "Ensure nginx is installed."
-  yum:
-    name: nginx
-    state: present
--
-  file:
-    path: "{{ app_config_path_link }}"
-    state: absent
-  name: "Remove nginx default config file"
-  tags:
-    - remove_nginx_default_config
--
-  changed_when: false
-  ignore_errors: yes
-  command: getenforce
-  name: "Check SELinux status"
-  register: sestatus
-  tags:
-    - check_selinux_status
--
-  name: "Allow SeLinux permission"
-  shell: "setsebool -P httpd_can_network_connect 1"
-  tags:
-    - allow_selinux
-  when: "\"Enabled\" in sestatus.stdout or \"Enforcing\" in sestatus.stdout"
-  ignore_errors: yes
--
   args:
     warn: false
   command: "wget --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie\" \"{{download_url}}\" -P /tmp"
