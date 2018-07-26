@@ -1,14 +1,11 @@
 ---
 # Tomcat installation directory
 
-jenkins_home_dir: /var/lib/jenkins
-
-# Java home directry
-
-java_home: /usr/lib/jvm/java-8-oracle
+jenkins_home_path: /var/lib/jenkins
 
 # Tomcat user and group
 
-jenkins_user: tomcat
-jenkins_group: tomcat
-jenkins_ssh_user: tomcat  #value will be jenkins if jenkins is installed without tomcat
+jenkins_user: jenkins
+jenkins_group: jenkins
+
+jenkins_ssh_user: tomcat  #name of remote host who will ssh into slave {jenkins/tomcat}
