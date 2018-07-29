@@ -14,6 +14,7 @@ This repository contains ansible role for tomcat setup. Molecule is used to perf
 * molecule
 * ansible
 * docker
+* goss
 
 # Usage
 
@@ -44,4 +45,39 @@ If your docker image and role is the same but test case changes then use,
 $ molecule create
 $ molecule Converge
 $ molecule verify
+```
+
+# Note
+
+If you want to test goss test case manually in remote workstation then
+
+* Install `facter` in remote os
+* Apply following command `goss --vars <(facter -j) validate`
+* Make sure you use `osfamily` variable in `goss.yaml`
+
+```
+{{if eq .Vars.osfamily "RedHat"}}
+user:
+  nginx:
+    exists: true
+    groups:
+    - nginx
+    home: /var/cache/nginx
+    shell: /sbin/nologin
+group:
+  nginx:
+    exists: true
+{{end}}
+{{if eq .Vars.osfamily "Debian"}}
+user:
+  www-data:
+    exists: true
+    groups:
+    - www-data
+    home: /var/www
+    shell: /usr/sbin/nologin
+group:
+  www-data:
+    exists: true
+{{end}}
 ```
