@@ -65,5 +65,11 @@ scenario:
     - destroy
 verifier:
   name: testinfra
+  enabled: True
   lint:
     name: flake8
+verifier:
+  name: goss
+  enabled: False
+  lint:
+    name: yamllint
