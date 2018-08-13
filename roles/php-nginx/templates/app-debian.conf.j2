@@ -1,0 +1,25 @@
+server {
+
+	listen 80 default_server;
+	server_name _;
+
+	root {{ app_root }};
+
+	index index.php index.html index.htm;
+
+	location / {
+		try_files $uri $uri/ /index.php?q=$uri&$args;
+	}
+
+	location ~ ^/wp-(admin/|login\.php\b) {
+		include config/app/php-config.conf;
+		#allow 103.216.59.40;    #office IP
+		#allow 203.76.222.14;	#Juyal vai home ip
+		#allow 178.86.7.157;	#tim IP
+		#deny all;
+	}
+
+	location ~ \.php$ {
+		include config/app/php-config.conf;
+	}
+}
