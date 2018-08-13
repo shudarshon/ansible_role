@@ -10,9 +10,9 @@
   service: "name=nginx state=restarted"
 -
   name: "enable php"
-  service: "name=php-fpm7.0.service state=started enabled=yes"
-  when: "ansible_os_family == 'RedHat'"
+  service: "name=php7.0-fpm.service state=started enabled=yes"
+  when: "ansible_os_family == 'Debian'"
 -
   name: "enable php"
   service: "name=php-fpm.service state=started enabled=yes"
-  when: "ansible_os_family == 'Debian'"
+  when: "ansible_os_family == 'RedHat'"
