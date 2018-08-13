@@ -8,3 +8,11 @@
 -
   name: "restart nginx"
   service: "name=nginx state=restarted"
+-
+  name: "enable php"
+  service: "name=php-fpm7.0.service state=started enabled=yes"
+  when: "ansible_os_family == 'RedHat'"
+-
+  name: "enable php"
+  service: "name=php-fpm.service state=started enabled=yes"
+  when: "ansible_os_family == 'Debian'"
