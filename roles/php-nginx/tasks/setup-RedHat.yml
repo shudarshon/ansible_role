@@ -42,3 +42,68 @@
     - allow_selinux
   when: "\"Enabled\" in sestatus.stdout or \"Enforcing\" in sestatus.stdout"
   ignore_errors: yes
+
+-
+  name: "Install php7 on centos or derivates"
+  with_items:
+    - php70u-cgi
+    - php70u-cli
+    - php70u-common
+    - php70u-fpm
+    - php70u-intl
+    - php70u-mysqlnd
+    - php70u-mbstring
+    - php70u-xml
+    - php70u-ldap
+    - php70u-pdo
+    - php70u-gd
+    - php70u-bcmath
+  yum:
+    name: "{{ item }}"
+    state: present
+-
+  name: "Extract nginx config tar into specific directory"
+  tags:
+    - copy_new_config
+  unarchive:
+    dest: "{{ nginx_root_dir }}"
+    group: root
+    mode: 493
+    owner: root
+    remote_src: false
+    src: ng-config.tar.gz
+-
+  copy:
+    dest: "{{ nginx_root_dir }}"
+    mode: 420
+    src: mime.types
+  name: "Install nginx mime types in nginx root directory"
+  tags:
+    - install_nginx_mime_types
+-
+  name: "Install nginx configuration in nginx root directory"
+  tags:
+    - install_nginx_configuration
+  template:
+    dest: "{{ nginx_config_path }}"
+    mode: 420
+    remote_src: false
+    src: nginx.conf.j2
+-
+  name: "Install application configuration in nginx sites directory"
+  tags:
+    - install_nginx_application_config
+  template:
+    dest: "{{ app_config_path }}"
+    mode: 420
+    remote_src: false
+    src: app-redhat.conf.j2
+-
+  file:
+    dest: "{{ app_config_path_link }}"
+    mode: 420
+    src: "{{ app_config_path }}"
+    state: link
+  name: "Install symlink to application config file"
+  tags:
+    - symlink_nginx_app_config

@@ -6,3 +6,77 @@
     state: present
   tags:
     - install_nginx
+-
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  name: "Install php7 on debian or derivates"
+  notify:
+    - "enable php"
+  with_items:
+    - php7.0-cgi
+    - php7.0-cli
+    - php7.0-common
+    - php7.0-fpm
+    - php7.0-intl
+    - php7.0-mysql
+    - php7.0-mbstring
+    - php7.0-xml
+    - php7.0-ldap
+    - php7.0-gd
+    - php7.0-bcmath
+-
+  name: "Extract nginx config tar into specific directory"
+  tags:
+    - copy_new_config
+  unarchive:
+    dest: "{{ nginx_root_dir }}"
+    group: root
+    mode: 493
+    owner: root
+    remote_src: false
+    src: ng-config.tar.gz
+-
+  copy:
+    dest: "{{ nginx_root_dir }}/config"
+    mode: 420
+    src: php-config.conf
+  name: "Install nginx php configuration"
+  tags:
+    - install_nginx_php_config
+-
+  copy:
+    dest: "{{ nginx_root_dir }}"
+    mode: 420
+    src: mime.types
+  name: "Install nginx mime types in nginx root directory"
+  tags:
+    - install_nginx_mime_types
+-
+  name: "Install nginx configuration in nginx root directory"
+  tags:
+    - install_nginx_configuration
+  template:
+    dest: "{{ nginx_config_path }}"
+    mode: 420
+    remote_src: false
+    src: nginx.conf.j2
+-
+  name: "Install application configuration in nginx sites directory"
+  tags:
+    - install_nginx_application_config
+  template:
+    dest: "{{ app_config_path }}"
+    mode: 420
+    remote_src: false
+    src: app-debian.conf.j2
+-
+  file:
+    dest: "{{ app_config_path_link }}"
+    mode: 420
+    src: "{{ app_config_path }}"
+    state: link
+  name: "Install symlink to application config file"
+  tags:
+    - symlink_nginx_app_config
