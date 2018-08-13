@@ -1,5 +1,15 @@
 ---
 -
+  file:
+    group: "{{ nginx_user }}"
+    mode: 493
+    owner: "{{ nginx_user }}"
+    path: "{{ app_root }}"
+    state: directory
+  name: "create application root directory"
+  tags:
+    - create_app_root
+-
   copy:
     dest: "{{ app_root }}"
     group: "{{ nginx_user }}"
