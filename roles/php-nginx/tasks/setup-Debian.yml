@@ -1,0 +1,8 @@
+---
+-
+  name: "Install nginx"
+  apt:
+    name: nginx
+    state: present
+  tags:
+    - install_nginx

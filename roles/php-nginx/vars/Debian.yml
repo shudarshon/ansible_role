@@ -1,0 +1,13 @@
+---
+# Dependency
+test_required_libs:
+    - net-tools
+    - openssh-client
+
+# Nginx config variable
+nginx_user: www-data
+nginx_root_dir: /etc/nginx
+nginx_config_path: /etc/nginx/nginx.conf
+app_config_path: /etc/nginx/sites-available/default
+app_config_path_link: /etc/nginx/sites-enabled/default
+nginx_config_root: /etc/nginx/sites-enabled

@@ -1,0 +1,83 @@
+process:
+  java:
+    running: true
+package:
+  nginx:
+    installed: true
+user:
+  tomcat:
+    exists: true
+    groups:
+    - tomcat
+    home: /opt/tomcat
+    shell: /bin/bash
+group:
+  tomcat:
+    exists: true
+{{if .Env.distro | regexMatch "[Rr]ed(H|h)at"}}
+user:
+  nginx:
+    exists: true
+    groups:
+    - nginx
+    home: /var/cache/nginx
+    shell: /sbin/nologin
+group:
+  nginx:
+    exists: true
+{{end}}
+{{if .Env.distro | regexMatch "[Dd]ebian"}}
+user:
+  www-data:
+    exists: true
+    groups:
+    - www-data
+    home: /var/www
+    shell: /usr/sbin/nologin
+group:
+  www-data:
+    exists: true
+{{end}}
+service:
+  nginx:
+    enabled: true
+    running: true
+  tomcat:
+    enabled: true
+    running: true
+file:
+  /opt/tomcat:
+    exists: true
+    mode: "0755"
+    owner: tomcat
+    group: tomcat
+    filetype: directory
+  /opt/tomcat/logs:
+    exists: true
+    mode: "0750"
+    owner: tomcat
+    group: tomcat
+    filetype: directory
+  /opt/tomcat/temp:
+    exists: true
+    mode: "0750"
+    owner: tomcat
+    group: tomcat
+    filetype: directory
+  /opt/tomcat/work:
+    exists: true
+    mode: "0750"
+    owner: tomcat
+    group: tomcat
+    filetype: directory
+  /opt/tomcat/webapps:
+    exists: true
+    mode: "0750"
+    owner: tomcat
+    group: tomcat
+    filetype: directory
+port:
+  tcp:80:
+    listening: true
+    ip:
+    - 0.0.0.0
