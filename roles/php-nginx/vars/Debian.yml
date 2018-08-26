@@ -1,9 +1,11 @@
 ---
 # Dependency
 test_required_libs:
+    - wget
+    - software-properties-common
     - net-tools
     - openssh-client
-    
+
 # Nginx config variable
 nginx_user: www-data
 nginx_root_dir: /etc/nginx
