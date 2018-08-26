@@ -3,7 +3,7 @@
 test_required_libs:
     - net-tools
     - openssh-client
-
+    
 # Nginx config variable
 nginx_user: www-data
 nginx_root_dir: /etc/nginx
