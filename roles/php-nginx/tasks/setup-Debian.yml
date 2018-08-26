@@ -1,5 +1,13 @@
 ---
 -
+  package:
+    name: "{{item}}"
+    state: present
+  name: "Install test dependencies"
+  tags:
+    - install_dependencies
+  with_items: "{{ test_required_libs }}"
+-
   name: "Install nginx"
   apt:
     name: nginx
@@ -11,7 +19,7 @@
     name: "{{ item }}"
     state: present
     update_cache: true
-  name: "Install php7 on debian or derivates"
+  name: "Install php7.0 on debian or derivates"
   notify:
     - "enable php"
   with_items:
@@ -26,6 +34,14 @@
     - php7.0-ldap
     - php7.0-gd
     - php7.0-bcmath
+    - php7.0-zip
+    - php7.0-curl
+    - php7.0-dev
+    - libapache2-mod-php7.0
+    - php7.0-json
+    - php7.0-opcache
+    - php7.0-readline
+
 -
   name: "Extract nginx config tar into specific directory"
   tags:
@@ -38,13 +54,14 @@
     remote_src: false
     src: ng-config.tar.gz
 -
-  copy:
-    dest: "{{ nginx_root_dir }}/config"
-    mode: 420
-    src: php-config.conf
   name: "Install nginx php configuration"
   tags:
     - install_nginx_php_config
+  template:
+    dest: "{{ nginx_root_dir }}/config/php-config.conf"
+    mode: 420
+    remote_src: false
+    src: php-config-debian.conf.j2
 -
   copy:
     dest: "{{ nginx_root_dir }}"
@@ -70,7 +87,7 @@
     dest: "{{ app_config_path }}"
     mode: 420
     remote_src: false
-    src: app-debian.conf.j2
+    src: app.conf.j2
 -
   file:
     dest: "{{ app_config_path_link }}"
