@@ -1,9 +1,104 @@
 ---
 -
-  name: "Install necssary package"
+  name: "Install epel repo."
   yum:
-    name: wget
+    name: "{{ epel_repo_url }}"
     state: present
+-
+  name: "Import epel GPG key."
+  rpm_key:
+    key: "{{ epel_repo_gpg_key_url }}"
+    state: present
+-
+  name: "Install remi repo."
+  yum:
+    name: "{{ remi_repo_url }}"
+    state: present
+-
+  name: "Import remi GPG key."
+  rpm_key:
+    key: "{{ remi_repo_gpg_key_url }}"
+    state: present
+-
+  name: "Add remi-php72"
+  yum_repository:
+    description: "Remi's PHP 7.2 RPM repository"
+    enabled: true
+    gpgcheck: 1
+    gpgkey: "{{ remi_repo_gpg_key_url }}"
+    mirrorlist: "{{ remi_php_mirror_url }}"
+    name: remi-php72
+-
+  package:
+    name: "{{item}}"
+    state: present
+  name: "Install test dependencies"
+  tags:
+    - install_dependencies
+  with_items: "{{ test_required_libs }}"
+-
+  name: "Install php7.2 on centos or derivates"
+  tags:
+    - install_php
+  with_items:
+    - php72
+    - php72-php-fpm
+    - php72-php-gd
+    - php72-php-json
+    - php72-php-mbstring
+    - php72-php-mysqlnd
+    - php72-php-xml
+    - php72-php-xmlrpc
+    - php72-php-opcache
+  yum:
+    name: "{{ item }}"
+    state: latest
+-
+  lineinfile: "dest=\"{{ fastcgi_config_file }}\" regexp=\"{{ item.regex }}\" line=\"{{ item.line }}\""
+  name: "edit php7.2-fpm user"
+  tags:
+    - set_php_fpm_nginx_user
+  with_items:
+    -
+      line: "user = \"{{ nginx_user }}\""
+      regex: "^user = .*"
+    -
+      line: "group = \"{{ nginx_user }}\""
+      regex: "^group = .*"
+    -
+      line: "listen.owner = \"{{ nginx_user }}\""
+      regex: "listen.owner.*"
+    -
+      line: "listen.group = \"{{ nginx_user }}\""
+      regex: "listen.group.*"
+    -
+      line: "listen.mode = 0660"
+      regex: "listen.mode.*"
+
+-
+  lineinfile: "dest=\"{{ php_ini_config_file }}\" regexp=\"{{ item.regex }}\" line=\"{{ item.line }}\""
+  name: "edit php fpm ini file settings"
+  tags:
+    - edit_php_fpm_config_ini
+  with_items:
+    -
+      line: "error_reporting = E_ALL"
+      regex: "error_reporting = .*"
+    -
+      line: "display_errors = On"
+      regex: "display_errors = .*"
+    -
+      line: cgi.fix_pathinfo=0
+      regex: cgi.fix_pathinfo=.*
+    -
+      line: "memory_limit = 512M"
+      regex: "memory_limit = .*"
+    -
+      line: "upload_max_filesize = 100M"
+      regex: "upload_max_filesize = .*"
+    -
+      line: "date.timezone = UTC"
+      regex: "date.timezone =.*"
 -
   name: "Enable nginx repo."
   tags:
@@ -29,38 +124,19 @@
     - remove_nginx_default_config
 -
   changed_when: false
-  ignore_errors: yes
   command: getenforce
+  ignore_errors: true
   name: "Check SELinux status"
   register: sestatus
   tags:
     - check_selinux_status
 -
+  ignore_errors: true
   name: "Allow SeLinux permission"
   shell: "setsebool -P httpd_can_network_connect 1"
   tags:
     - allow_selinux
   when: "\"Enabled\" in sestatus.stdout or \"Enforcing\" in sestatus.stdout"
-  ignore_errors: yes
-
--
-  name: "Install php7 on centos or derivates"
-  with_items:
-    - php70u-cgi
-    - php70u-cli
-    - php70u-common
-    - php70u-fpm
-    - php70u-intl
-    - php70u-mysqlnd
-    - php70u-mbstring
-    - php70u-xml
-    - php70u-ldap
-    - php70u-pdo
-    - php70u-gd
-    - php70u-bcmath
-  yum:
-    name: "{{ item }}"
-    state: present
 -
   name: "Extract nginx config tar into specific directory"
   tags:
@@ -72,6 +148,15 @@
     owner: root
     remote_src: false
     src: ng-config.tar.gz
+-
+  name: "Install nginx php configuration"
+  tags:
+    - install_nginx_php_config
+  template:
+    dest: "{{ nginx_root_dir }}/config/php-config.conf"
+    mode: 420
+    remote_src: false
+    src: php-config-redhat.conf.j2
 -
   copy:
     dest: "{{ nginx_root_dir }}"
@@ -97,7 +182,7 @@
     dest: "{{ app_config_path }}"
     mode: 420
     remote_src: false
-    src: app-redhat.conf.j2
+    src: app.conf.j2
 -
   file:
     dest: "{{ app_config_path_link }}"
