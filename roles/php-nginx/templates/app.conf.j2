@@ -13,9 +13,8 @@ server {
 
 	location ~ ^/wp-(admin/|login\.php\b) {
 		include config/php-config.conf;
-		#allow 103.216.59.40;    #office IP
-		#allow 203.76.222.14;	#Juyal vai home ip
-		#allow 178.86.7.157;	#tim IP
+		#allow x.x.x.x;    #workspace IP
+		#allow x.x.x.x;    #home IP		
 		#deny all;
 	}
 
