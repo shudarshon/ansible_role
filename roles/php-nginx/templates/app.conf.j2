@@ -1,20 +1,31 @@
 server {
-
-	listen 80 default_server;
+	listen 80;
 	server_name _;
-
 	root {{ app_root }};
 
 	index index.php index.html index.htm;
 
 	location / {
+
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-Server $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $scheme;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header Host $host;
+
 		try_files $uri $uri/ /index.php?q=$uri&$args;
+	}
+
+	location /health-check {
+		access_log off;
+		return 200;
 	}
 
 	location ~ ^/wp-(admin/|login\.php\b) {
 		include config/php-config.conf;
 		#allow x.x.x.x;    #workspace IP
-		#allow x.x.x.x;    #home IP		
+		#allow x.x.x.x;    #home IP
 		#deny all;
 	}
 
