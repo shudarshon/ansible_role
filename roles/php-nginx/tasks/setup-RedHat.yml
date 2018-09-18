@@ -116,13 +116,6 @@
     name: nginx
     state: present
 -
-  file:
-    path: "{{ app_config_path_link }}"
-    state: absent
-  name: "Remove nginx default config file"
-  tags:
-    - remove_nginx_default_config
--
   changed_when: false
   command: getenforce
   ignore_errors: true
@@ -138,57 +131,10 @@
     - allow_selinux
   when: "\"Enabled\" in sestatus.stdout or \"Enforcing\" in sestatus.stdout"
 -
-  name: "Extract nginx config tar into specific directory"
-  tags:
-    - copy_new_config
-  unarchive:
-    dest: "{{ nginx_root_dir }}"
-    group: root
-    mode: 493
-    owner: root
-    remote_src: false
-    src: ng-config.tar.gz
--
-  name: "Install nginx php configuration"
-  tags:
-    - install_nginx_php_config
-  template:
-    dest: "{{ nginx_root_dir }}/config/php-config.conf"
-    mode: 420
-    remote_src: false
-    src: php-config-redhat.conf.j2
--
-  copy:
-    dest: "{{ nginx_root_dir }}"
-    mode: 420
-    src: mime.types
-  name: "Install nginx mime types in nginx root directory"
-  tags:
-    - install_nginx_mime_types
--
-  name: "Install nginx configuration in nginx root directory"
-  tags:
-    - install_nginx_configuration
-  template:
-    dest: "{{ nginx_config_path }}"
-    mode: 420
-    remote_src: false
-    src: nginx.conf.j2
--
-  name: "Install application configuration in nginx sites directory"
-  tags:
-    - install_nginx_application_config
-  template:
-    dest: "{{ app_config_path }}"
-    mode: 420
-    remote_src: false
-    src: app.conf.j2
--
   file:
-    dest: "{{ app_config_path_link }}"
-    mode: 420
-    src: "{{ app_config_path }}"
-    state: link
-  name: "Install symlink to application config file"
+    mode: 493
+    path: "{{ nginx_root_dir }}/config"
+    state: directory
+  name: "create nginx configuration alternate directory"
   tags:
-    - symlink_nginx_app_config
+    - create_alternate_nginx_root
