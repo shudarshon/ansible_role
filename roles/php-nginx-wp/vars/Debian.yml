@@ -1,0 +1,15 @@
+---
+# Dependency
+test_required_libs:
+    - wget
+    - software-properties-common
+    - net-tools
+    - openssh-client
+    - unzip
+
+# Nginx config variable
+nginx_user: www-data
+app_config_path: /etc/nginx/sites-available/default
+app_config_path_link: /etc/nginx/sites-enabled/default
+nginx_config_root: /etc/nginx/sites-enabled
+fastcgi_pass: unix:/run/php/php7.0-fpm.sock
