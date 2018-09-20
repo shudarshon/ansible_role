@@ -1,6 +1,6 @@
 # About
 
-This repository contains ansible role for php and nginx setup. Molecule is used to perform testing of ansible role in docker image with Testinfra. Supported OS:
+This repository contains ansible role for php, nginx and wordpress setup. Molecule is used to perform testing of ansible role in docker image with Testinfra. Supported OS:
 
 * Ubuntu/Debian
 * RedHat/CentOS
