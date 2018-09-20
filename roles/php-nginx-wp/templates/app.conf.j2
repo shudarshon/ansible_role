@@ -34,18 +34,18 @@ server {
 
 	# Add ELB healthcheck in case of https redirect
 	location /health-check {
-					access_log off;
-					return 200;
+				access_log off;
+				return 200;
 	}
 
 	# Allow this file since some plugin requires this file
 	location /wp-admin/admin-ajax.php {
-					allow all;
+				allow all;
 	}
 
 	# Add trailing slash to */wp-admin requests.
 	location = /wp-admin {
-            rewrite ^ /wp-admin/ permanent;
+        rewrite ^ /wp-admin/ permanent;
   }
 
 	location = /robots.txt {
