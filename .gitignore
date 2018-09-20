@@ -1,3 +1,1 @@
-roles/**/jdk-*.tar.gz
-hosts
-play.yml
+play.retry
