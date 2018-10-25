@@ -9,7 +9,7 @@ Environment=JAVA_HOME=/usr
 Environment=CATALINA_PID={{ tomcat_app_path }}/temp/tomcat.pid
 Environment=CATALINA_HOME={{ tomcat_app_path }}
 Environment=CATALINA_BASE={{ tomcat_app_path }}
-Environment='CATALINA_OPTS=-Xms512M -Xmx1024M -server -XX:+UseParallelGC'
+Environment='CATALINA_OPTS=-Xms1024M -Xmx2048M -server -XX:+UseParallelGC'
 Environment='JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
 
 ExecStart={{ tomcat_app_path }}/bin/startup.sh
