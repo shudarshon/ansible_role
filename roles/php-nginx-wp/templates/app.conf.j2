@@ -19,6 +19,8 @@ server {
     		set $no_cache 1;
 	}
 
+    location ~* \.(?:css|js|map|jpe?g|gif|png)$ { }
+
 	location / {
 
 				proxy_set_header X-Forwarded-Host $host;
