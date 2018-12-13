@@ -5,6 +5,12 @@ server {
 	charset utf-8;
 	root {{ app_root }};
 
+	client_max_body_size {{ nginx_file_upload_limit_mb }}M;
+
+	#if ($http_x_forwarded_proto != "https") {
+	#			rewrite ^ https://$host$request_uri permanent;
+	#}
+
 	if ($query_string != "") {
     		set $no_cache 1;
 	}
