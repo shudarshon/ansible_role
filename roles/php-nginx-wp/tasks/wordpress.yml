@@ -43,3 +43,11 @@
     state: absent
   tags:
     - remove_wp_download_archive
+-
+  name: "Install WP-CLI"
+  get_url:
+    dest: "{{ wp_cli_bin_path }}"
+    mode: 493
+    url: "{{ wp_cli_phar_url }}"
+  tags:
+    - install_wp_cli
