@@ -51,18 +51,3 @@
   name: "create application root directory"
   tags:
     - create_app_root
-#-
-#  copy:
-#    dest: "{{ app_root }}"
-#    group: "{{ nginx_user }}"
-#    mode: 420
-#    owner: "{{ nginx_user }}"
-#    src: index.php
-#  name: "Copy sample php file"
-#  tags:
-#    - copy_sample_php_file
-#  notify:
-#    - "reload systemd"
-#    - "enable nginx"
-#    - "restart nginx"
-#    - "enable php"
