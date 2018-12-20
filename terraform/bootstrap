@@ -3,9 +3,11 @@ if [[ $(grep -w ID /etc/os-release | cut -d \= -f2) == [Uu][Bb][Uu][Nn][Tt][Uu] 
 then
 	sudo apt-get update -y
 	sudo apt-get install python-setuptools -y
+	sudo pip install awscli
 elif [[ $(grep -w ID /etc/os-release | cut -d \" -f2) == [Aa][Mm][Zz][Nn] ]]
 then
 	sudo yum update -y
-    sudo yum install python-setuptools python-pip -y
-    sudo pip install httplib2
+  sudo yum install python-setuptools python-pip -y
+  sudo pip install httplib2
+	sudo pip install awscli
 fi
