@@ -5,15 +5,13 @@ provider "aws" {
 resource "aws_instance" "DevInstanceAWS" {
   count = "${var.instance_count}"
   instance_type = "${var.instance_type}"
-  subnet_id = "${var.subnet_id}"
+  subnet_id = "${element(var.subnet_ids, count.index)}"
   ami = "${var.ami_id}"
   key_name = "${var.ssh_key_name}"
   tags {
     Name = "${var.instance_name}"
   }
-  security_groups = [
-        "${var.security_group}"
-  ]
+  security_groups = "${var.security_groups}"
 }
 
 resource "null_resource" "ConfigureAnsibleLabelVariable" {
