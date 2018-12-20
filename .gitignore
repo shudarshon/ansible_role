@@ -1,3 +1,4 @@
+venv/*
 hosts
 play.yml
 play.retry
