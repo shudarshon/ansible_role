@@ -2,3 +2,4 @@ venv/*
 hosts
 play.yml
 play.retry
+terraform/terraform.tfvars
