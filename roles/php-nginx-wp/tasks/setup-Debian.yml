@@ -65,3 +65,9 @@
     -
       line: "date.timezone = UTC"
       regex: "date.timezone =.*"
+    -
+      line: "post_max_size = 100M"
+      regex: "post_max_size =.*"
+    -
+      line: "max_execution_time = 300"
+      regex: "max_execution_time =.*"
