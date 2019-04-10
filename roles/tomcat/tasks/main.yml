@@ -2,6 +2,8 @@
 -
   include_tasks: env.yml
 -
+  include_tasks: java.yml
+-
   include_tasks: tomcat.yml
 -
   include_tasks: nginx.yml
