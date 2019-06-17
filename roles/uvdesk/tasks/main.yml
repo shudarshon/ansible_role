@@ -1,0 +1,11 @@
+---
+-
+  include_tasks: env.yml
+-
+  include_tasks: wordpress.yml
+-
+  include_tasks: git.yml
+-
+  include_tasks: wpcli.yml
+-
+  include_tasks: nginx.yml

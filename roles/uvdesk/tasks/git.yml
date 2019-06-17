@@ -1,0 +1,11 @@
+---
+-
+  git:
+    accept_hostkey: true
+    dest: "{{app_root}}/"
+    #key_file: "{{ nginx_ssh_root }}/id_rsa"
+    repo: "{{ repo_url }}"
+    version: "{{ git_branch }}"
+  name: "Clone uvdesk code repository"
+  tags:
+    - add_uvdesk_repo

@@ -1,0 +1,14 @@
+---
+-
+  name: reload systemd
+  command: systemctl daemon-reload
+-
+  name: enable nginx
+  service: name=nginx state=started enabled=yes
+-
+  name: restart nginx
+  service: name=nginx state=restarted
+-
+  name: enable php
+  listen: restart nginx
+  service: name=php7.2-fpm.service state=started enabled=yes

@@ -1,0 +1,61 @@
+---
+-
+  copy:
+    dest: "{{ nginx_config_dir }}"
+    mode: 420
+    src: mime.types
+  name: "Install nginx mime types in nginx root directory"
+  tags:
+    - install_nginx_mime_types
+-
+  name: "Install nginx configuration in nginx root directory"
+  tags:
+    - install_nginx_configuration
+  template:
+    dest: "{{ nginx_config_dir }}/nginx.conf"
+    mode: 420
+    remote_src: false
+    src: nginx.conf.j2
+-
+  name: "Install application configuration in nginx sites directory"
+  tags:
+    - install_nginx_application_config
+  template:
+    dest: "{{ app_config_path }}"
+    mode: 420
+    remote_src: false
+    src: app.conf.j2
+-
+  file:
+    path: "{{ app_config_path_link }}"
+    state: absent
+  name: "Remove nginx default config file"
+  tags:
+    - remove_nginx_default_config
+-
+  file:
+    group: "{{ nginx_user }}"
+    mode: 493
+    owner: "{{ nginx_user }}"
+    path: "{{item}}"
+    recurse: yes
+    state: directory
+  name: "Change git repository user-group ownership to nginx"
+  tags:
+    - change_git_repo_user_group_ownership
+  with_items:
+    - "{{ app_root }}"
+-
+  file:
+    dest: "{{ app_config_path_link }}"
+    mode: 420
+    src: "{{ app_config_path }}"
+    state: link
+  name: "Install symlink to application config file"
+  tags:
+    - symlink_nginx_app_config
+  notify:
+    - "reload systemd"
+    - "enable nginx"
+    - "restart nginx"
+    - "enable php"
