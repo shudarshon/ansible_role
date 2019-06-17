@@ -20,3 +20,21 @@
   name: "Clone uvdesk code repository"
   tags:
     - add_uvdesk_repo
+
+-
+  args:
+    chdir: "{{ app_root }}"
+  name: "Update composer packages"
+  shell: "composer update"
+  tags:
+    - composer_update
+
+-
+  name: "Install app environment"
+  tags:
+    - app_env_setup
+  template:
+    dest: "{{ app_root }}/.env"
+    mode: 420
+    remote_src: false
+    src: env.j2
