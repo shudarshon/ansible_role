@@ -3,12 +3,12 @@ server {
 	listen 80;
 	server_name _;
 	charset utf-8;
-	root {{ app_root }};
+	root {{ app_root }}/public;
 
 	client_max_body_size {{ nginx_file_upload_limit_mb }}M;
 
 	#if ($http_x_forwarded_proto != "https") {
-	#			rewrite ^ https://$host$request_uri permanent;
+	#		rewrite ^ https://$host$request_uri permanent;
 	#}
 
 	if ($query_string != "") {
@@ -45,16 +45,6 @@ server {
 				access_log off;
 				return 200;
 	}
-
-	# Allow this file since some plugin requires this file
-	location /wp-admin/admin-ajax.php {
-				allow all;
-	}
-
-	# Add trailing slash to */wp-admin requests.
-	location = /wp-admin {
-        rewrite ^ /wp-admin/ permanent;
-  }
 
 	location = /robots.txt {
 				allow all;
@@ -110,30 +100,6 @@ server {
 					log_not_found off;
 					expires max;
     	}
-
-	# Deny request to wp config file, readme file etc.
-	location ~* /(\.|wp-config\.php|wp-config\.txt|changelog\.txt|readme\.txt|readme\.html|license\.txt) {
-					deny all;
-	}
-
-	# Deny all REST API access
-	location ^~ /wp-json/ {
-    		deny all;
-    		access_log off;
-	}
-
-	# Allow wp admin panel by IP
-	location ~ ^/wp-(admin/|login\.php\b) {
-				#allow 127.0.0.1;  #localhost
-				#allow x.x.x.x;    #any IP
-				#deny all;
-
-				fastcgi_split_path_info ^(.+\.php)(/.+)$;
-        fastcgi_pass {{ fastcgi_pass }};
-        fastcgi_index index.php;
-        include fastcgi_params;
-        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
-	}
 
 	# Process files matching php extension
 	location ~ \.php(?:/|$) {
