@@ -1,5 +1,16 @@
 ---
 -
+  file:
+    group: "{{ nginx_user }}"
+    mode: 448
+    owner: "{{ nginx_user }}"
+    path: "{{ app_root }}"
+    state: directory
+  name: "Create application directory"
+  tags:
+    - create_app_directory
+
+-
   git:
     accept_hostkey: true
     dest: "{{app_root}}/"
