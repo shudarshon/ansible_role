@@ -4,7 +4,6 @@ test_required_libs:
     - wget
     - software-properties-common
     - net-tools
-    - openssh-client
     - unzip
 
 # Nginx Configurations
